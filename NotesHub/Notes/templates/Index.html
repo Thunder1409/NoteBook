@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <title>NotesHub</title>
+  <link rel="stylesheet" href="{% static 'CSS/Style.css' %}">
+  <!-- Boxiocns CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <header>
+    <h3>NotesHub</h3>
+        {% if not mkc %}
+            <label for="show" class="bx bxs-user-circle login"></label>
+        {% endif %}
+  </header>
+  <div class="sidebar close">
+    <div class="logo-details">
+      <i class='bx bx-notepad'></i>
+      <span class="logo_name">NotesHub</span>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class='bx bxs-notepad'></i>
+            <span class="link_name">All Note's</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">All Note's</a></li>
+          <!--backend content-->
+
+
+          {% for project, note in all_notes.items %}
+            <form action="open/" method="post"> {% csrf_token %}>
+                <input type="hidden" name="project" value="{{ project }}">
+                <input type="hidden" name="note" value="{{ note }}">
+                <button type="submit"> {{ project }} </button>
+            </form>
+<!--          <li><a href="#">{{ project }}</a></li>-->
+          {% endfor %}
+
+        </ul>
+      </li>
+      <li>
+        <a href="new/">
+          <i class='bx bx-note'></i>
+          <span class="link_name">New</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="#">New</a></li>
+        </ul>
+      </li>
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class='bx bx-star'></i>
+            <span class="link_name">Favourite</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Favourite</a></li>
+          <!--backend content-->
+
+          {% for project, note in fav_notes.items %}
+            <form>
+                <input type="hidden" name="project" value="{{ project }}">
+                <button type="submit"> {{ project }} </button>
+            </form>
+<!--          <li><a href="#">{{ project }}</a></li>-->
+          {% endfor %}
+        </ul>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-revision'></i>
+          <span class="link_name">Reload</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="#">Reload</a></li>
+        </ul>
+      </li>
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class='bx bx-history'></i>
+            <span class="link_name">Recent</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Recent</a></li>
+          <!--backend content-->
+
+          {% for project, note in all_notes.items %}
+            <form action="save/" method="post"> {% csrf_token %}
+                <input type="hidden" name="project" value="{{ project }}">
+                <button type="submit"> {{ project }} </button>
+            </form>
+<!--          <li><a href="#">{{ project }}</a></li>-->
+          {% endfor %}
+        </ul>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-info-circle'></i>
+          <span class="link_name"><label for="about">Explore/About</label></span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="#"><label for="about">Explore/About</label></a></li>
+        </ul>
+      </li>
+      <li>
+        <div class="iocn-link">
+          <a href="#">
+            <i class='bx bx-cog'></i>
+            <span class="link_name">Setting</span>
+          </a>
+          <i class='bx bxs-chevron-down arrow'></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a class="link_name" href="#">Setting</a></li>
+          <li><a href="#">Dark Mode</a></li> <!--backend content-->
+          <li><a href="#">Study Mode</a></li> <!--backend content-->
+          <li><a href="#">Close Site</a></li> <!--backend content-->
+        </ul>
+      </li>
+      <li>
+        <a href="#">
+          <i class='bx bx-error'></i>
+          <span class="link_name"><label for="issue">Issue</label></span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="#"><label for="issue">Report an issue</label></a></li>
+        </ul>
+      </li>
+      <br><br><br><br>
+        {% if mkc %}
+      <li>
+        <a href="logout/">
+          <i class='bx bx-log-out'></i>
+          <span class="link_name">Logout</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a class="link_name" href="logout/">Logout</a></li>
+        </ul>
+      </li>
+        {% endif %}
+    </ul>
+  </div>
+  <section class="home-section">
+    <div class="home-content">
+      <i class='bx bx-menu'></i>
+    </div>
+  </section>
+  <script>
+    let arrow = document.querySelectorAll(".arrow");
+    for (var i = 0; i < arrow.length; i++) {
+      arrow[i].addEventListener("click", (e) => {
+        let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+        arrowParent.classList.toggle("showMenu");
+      });
+    }
+    let sidebar = document.querySelector(".sidebar");
+    let sidebarBtn = document.querySelector(".bx-menu");
+    console.log(sidebarBtn);
+    sidebarBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("close");
+    });
+  </script>
+
+  <!-- About popup -->
+
+  <div class="center">
+    <input type="checkbox" id="about">
+    <div class="aboutcontainer">
+        <label for="about" class="close-btn bx bx-x" title="close"></label>
+        <div class="text">
+            <h1>aefrgs</h1>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam quae earum nemo illum velit
+                reiciendis! Iste ea amet pariatur quia tenetur dolores vel praesentium? Veniam similique vitae
+                reiciendis id vel! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quaerat qui
+                consequuntur, magni sapiente assumenda impedit? Incidunt saepe excepturi iste, velit cumque amet
+                optio adipisci repellat. Reiciendis nobis ad ex quas itaque voluptate, commodi doloremque a
+                distinctio dolores esse tenetur, sit provident excepturi ut. Debitis assumenda id optio magni
+                placeat, tempore praesentium atque deserunt doloribus nobis cum molestias corrupti. Molestias
+                consectetur placeat.</p>
+            <h2>hvjksv</h2>
+            <p>fnb,fn ,dmsfhlkjfns.d,gfnmskljf;wrkfmsdf</p>
+            <h3>.msjfskm</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Report an issue popup -->
+
+<div class="center">
+    <input type="checkbox" id="issue">
+    <div class="issuecontainer aboutcontainer">
+        <label for="issue" class="close-btn bx bx-x" title="close"></label>
+        <h2>Report an Issue</h2>
+        <form id="issueForm" action="#" method="post">
+            <div class="form-group">
+                <label for="issue-title">Issue Title:</label>
+                <input type="text" id="issue-title" name="issue-title" required>
+            </div>
+            <div class="form-group">
+                <label for="issue-type">Issue Type:</label>
+                <select id="issue-type" name="issue-type" required>
+                    <option value="">Select an issue type</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Feature Request">Feature Request</option>
+                    <option value="Accessibility">Accessibility</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Design">Design</option>
+                    <option value="Content">Content</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group issuetype">
+                <label for="description">Issue Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit Issue">
+            </div>
+        </form>
+    </div>
+</div>
+
+  <!-- enableFeatures -->
+  <nav2>
+    <div class="enableFeatures">
+      <ul class="lists">
+        <li class="lists ">
+          <a href="https://mail.google.com" target="_blank" class="nav-link">
+            <i class='bx bx-envelope icon'></i>
+          </a>
+        </li>
+        <li class="lists">
+          <a href="https://drive.google.com" target="_blank" class="nav-link">
+            <i class='bx bxl-google-cloud icon'></i>
+          </a>
+        </li>
+        <li class="lists">
+          <a href="https://www.google.com" target="_blank" class="nav-link">
+            <i class='bx bxl-google icon'></i>
+          </a>
+        </li>
+        <li class="lists">
+          <a href="https://web.whatsapp.com" target="_blank" class="nav-link">
+            <i class='bx bxl-whatsapp icon'></i>
+          </a>
+        </li>
+        <li class="lists">
+          <a href="https://chat.openai.com" target="_blank" blank class="nav-link">
+            <i class='bx bxs-brain icon'></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav2>
+  <script>
+    const navBar2 = document.querySelector("nav2");
+
+    navBar2.addEventListener("click", () => {
+      navBar2.classList.toggle("open");
+    })
+
+
+  </script>
+  <!-- note -->
+  <center>
+    <div class="note-box">
+      <h1>NoteBox</h1>
+      {{ message }}
+
+      <!-- edit -->
+      <div class="edit">
+        <select class="change" onchange="changeFont(this.value)">
+          <option value="Arial">Arial</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Trebuchet MS">Trebuchet MS</option>
+          <option value="Consolas">Consolas</option>
+          <option value="Impact">Impact</option>
+          <option value="Garamond">Garamond</option>
+          <option value="Sans Serif">Sans Serif</option>
+          <option value="Palatino">Palatino</option>
+          <option value="Cursive">Cursive</option>
+          <option value="fantasy">fantasy</option>
+          <option value="monospace">monospace</option>
+          <option value="serif">serif</option>
+        </select>
+        <select class="change" onchange="changeSize(this.value +'px')">
+          <option>18</option>
+          <option>8</option>
+          <option>10</option>
+          <option>12</option>
+          <option>14</option>
+          <option>16</option>
+          <option>20</option>
+          <option>22</option>
+          <option>24</option>
+          <option>26</option>
+          <option>28</option>
+          <option>30</option>
+          <option>32</option>
+          <option>34</option>
+          <option>36</option>
+          <option>48</option>
+        </select>
+        <input type="button" value="Bold" class="editBs" onclick="bold()">
+        <input type="button" value="Italic" class="editBs" onclick="italic()">
+        <input type="button" value="Underline" class="editBs" onclick="underline()">
+        <div class="title-container">
+          <!-- link -->
+          <button id="linkBtn" class="bx bx-link" onclick="addLink()"></button>
+           <!-- import -->
+         <a href="#"><button id="importBtn" class="bx bx-import"></button></a></div>
+
+<!--        Import pop up-->
+        <x>
+          <ul class="dropdown">
+            <li class="lists">
+              <a href="#" class="dlink">
+                <i class='bx bx-image-add icon'></i>
+              </a>
+            </li>
+            <li class="lists">
+              <a href="#" class="dlink">
+                <i class='bx bxs-file-pdf icon'></i>
+
+              </a>
+            </li>
+          </ul>
+        </x>
+
+        <script>
+        const xc = document.querySelector("x");
+        const impBtn = document.querySelector("#importBtn");
+        impBtn.addEventListener("click", () => {
+          xc.classList.toggle("open");
+        })
+
+      </script>
+
+      </div>
+
+      <script type="text/javascript">
+        function changeFont(font) {
+          document.getElementById("textarea").style.fontFamily = font;
+        }
+        function changeSize(size) {
+          document.getElementById("textarea").style.fontSize = size;
+        }
+        function bold() {
+          var bol = document.getElementById("textarea").style.fontWeight;
+          if (bol == "normal") {
+            document.getElementById("textarea").style.fontWeight = "bold";
+          }
+          else {
+            document.getElementById("textarea").style.fontWeight = "normal";
+          }
+        }
+        function italic() {
+          var it = document.getElementById("textarea").style.fontStyle;
+          if (it == "normal") {
+            document.getElementById("textarea").style.fontStyle = "italic";
+          }
+          else {
+            document.getElementById("textarea").style.fontStyle = "normal";
+          }
+        }
+        function underline() {
+          var ul = document.getElementById("textarea").style.textDecoration;
+          if (ul == "none") {
+            document.getElementById("textarea").style.textDecoration = "underline";
+          }
+          else {
+            document.getElementById("textarea").style.textDecoration = "none";
+          }
+        }
+      </script>
+
+      <form action="save/" method="post"> {% csrf_token %}
+
+      <!-- title-container  -->
+      <div class="title-container">
+        <input type="text" id="note-title" placeholder="Choose a note title..." name="note_title" {% if note_title %} value="{{ note_title }}" {% endif %}>
+<!--        {{ notes.title }}-->
+          <button id="saveBtn" class="bx bx-save" type="submit"></button>
+
+<!--        <div class="simple">{{ notes.favorite }}</div>-->
+<!--          <script>-->
+<!--            const favBtn = document.querySelector(".fav");-->
+<!--            favBtn.addEventListener("click", () => {-->
+<!--              favBtn.classList.toggle("color");-->
+<!--            })-->
+<!--          </script>-->
+      <input type="checkbox" id="fav" name="fav_checkbox" value="true">
+
+      </div>
+          
+
+      <!-- textarea  -->
+      <textarea id="textarea" class="type-box" placeholder="Type here..." name="note_contant"> {% if note_title %} {{ note_data }} {% endif %}</textarea>
+<!--        {{ notes.note }}-->
+      </form>
+      <!-- link -->
+      <script>
+        function addLink() {
+          var linkText = prompt("Enter the link text:", "Link Text");
+          var linkUrl = prompt("Enter the link URL:", "https://");
+
+          if (linkText && linkUrl) {
+            var textInput = document.getElementById("textarea");
+            var link = '[' + linkText + '](' + linkUrl + ')';
+            textInput.value += link + "🔗" + " ";
+          }
+        }
+        document.getElementById("textarea").addEventListener("dblclick", function (event) {
+          var target = event.target;
+          if (target.tagName === 'TEXTAREA') {
+            var text = target.value;
+            var cursorPosition = target.selectionStart;
+
+            // Find the start of the link text
+            var linkTextStart = text.lastIndexOf('[', cursorPosition);
+            if (linkTextStart === -1) return;
+
+            // Find the end of the link text
+            var linkTextEnd = text.indexOf(']', linkTextStart);
+            if (linkTextEnd === -1) return;
+
+            // Find the start of the link URL
+            var linkUrlStart = text.indexOf('](', linkTextEnd);
+            if (linkUrlStart === -1) return;
+
+            // Find the end of the link URL
+            var linkUrlEnd = text.indexOf(')', linkUrlStart);
+            if (linkUrlEnd === -1) return;
+
+            // Extract link text and URL
+            var linkText = text.substring(linkTextStart + 1, linkTextEnd);
+            var linkUrl = text.substring(linkUrlStart + 2, linkUrlEnd);
+
+            // Check if this is the first click on the link text
+            if (!target.dataset.clicked) {
+              target.dataset.clicked = "true"; // Mark the link text as clicked
+              return; // Do not proceed to confirm on the first click
+            }
+
+            // Confirm opening link in a new window
+            var confirmOpenNewPage = confirm("Open " + linkText + " in a new webpage?");
+            if (confirmOpenNewPage) {
+              if (linkUrl.trim() !== "") {
+                window.open(linkUrl, '_blank');
+              } else {
+                alert("Invalid URL!");
+              }
+            }
+          }
+        });
+
+
+      </script>
+      <!-- recent -->
+      <h2>Recent Notes</h2>
+      <section id="output">
+          {% if mkc %}
+          {% for project, note in all_notes.items %}
+                <div class="list">
+                    <form method="post" action="delete/">{% csrf_token %}
+                        <button class="delete" type="submit" data-project="{{ project }}" data-note="{{ note }}">Delete</button>
+
+                    <h2 class="output-title">{{ project|slice:":6" }}{% if project|length > 8 %}...{% endif %} </h2>
+                        <input type="hidden" name="project" value="{{ project }}">
+                    <p class="text"> {{ note|slice:":18" }}{% if note|length > 20 %}.......{% endif %}</p>
+                        <input type="hidden" name="note" value="{{ note }}">
+                    </form>
+                </div>
+          {% endfor %}
+          {% endif %}
+
+      </section>
+    </div>
+  </center>
+  <br>
+
+     <!-- login popup screen -->
+
+    <div class="center">
+        <input type="checkbox" id="show">
+        <div class="container">
+            <label for="show" class="close-btn bx bx-x" title="close"></label>
+            <div class="text">
+                Login Form
+            </div>
+            <form method="post" action="login/">{% csrf_token %}
+                <div class="data">
+                    <label>Email or Phone</label>
+                    {{login.email}}
+<!--                    <input type="text" placeholder="Email or Phone" required>-->
+                </div>
+                <div class="data">
+                    <label>Password</label>
+                    {{login.password}}
+<!--                    <input type="password" placeholder="Password" required>-->
+                </div>
+                <div class="forgot-pass">
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <div class="btn">
+                    <div class="inner"></div>
+                    <button type="submit">login</button>
+                </div>
+                <div class="signup-link">
+                    Not a member? <a href="#"><label for="showsign" class="showsign-btn">Sign Up</label></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- sign up popup -->
+
+    <div class="center">
+        <input type="checkbox" id="showsign">
+        <div class="container containersign">
+            <label for="showsign" class="close-btn bx bx-x" title="close"></label>
+            <div class="text">
+                Sign Up Form
+            </div>
+            <form method="POST" action="signup/">{% csrf_token %}
+                <div class="data">
+                    <label>Email or Phone</label>
+                    {{signup.email}}
+<!--                    <input type="text" placeholder="Email or Phone" required>-->
+                </div>
+                <div class="data">
+                    <label>User Name</label>
+                    {{signup.name}}
+<!--                    <input type="text" placeholder="User Name" required>-->
+                </div>
+                <div class="data">
+                    <label>Password</label>
+                    {{signup.password}}
+<!--                    <input type="password" placeholder="Password" required>-->
+                </div>
+
+                <div class="btn">
+                    <div class="inner"></div>
+                    <button type="submit">Create Account</button>
+                </div>
+                <div class="signup-link">
+                    Have a Account? <a href="#"><label for="showsign" class="showsign-btn">Login</label></a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+  <script type="text/javascript" src="{% static 'JS/Note.js' %}"></script>
+
+</body>
+
+</html>
